@@ -1,20 +1,26 @@
 const mongoose = require("mongoose");
 const { isEmail } = require("validator");
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcrypt");
 const userSchema = mongoose.Schema(
   {
-    name: {
+    pseudo: {
       type: String,
       required: true,
+      unique: true,
+      minlength: 3,
+      maxlength: 53,
     },
     email: {
       type: String,
       required: true,
-      validate: [isEmail]
+      validate: [isEmail],
+      unique: true,
     },
     password: {
       type: String,
       required: true,
+      max: 1024,
+      minlength: 6,
     },
     pic: {
       type: String,
@@ -27,12 +33,12 @@ const userSchema = mongoose.Schema(
   }
 );
 
-userSchema.pre("save", async function(next){
+userSchema.pre("save", async function (next) {
   const salt = await bcrypt.genSalt();
   const hashedPassword = await bcrypt.hash(this.password, salt);
   this.password = hashedPassword;
   next();
-})
+});
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;

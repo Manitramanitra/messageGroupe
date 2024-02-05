@@ -2,16 +2,27 @@ const expressAsyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const generateToken = require("../config/generateToken");
 const bcrypt = require("bcrypt")
+
 const resgisterUser = expressAsyncHandler(async (req, res) => {
-  const { name, email, password, pic } = req.body;
-  if (!name || !email || !password) {
+  const { pseudo, email, password, pic } = req.body;
+  if (!pseudo || !email || !password) {
     throw new Error("Please Enter all the fields");
   }
 
-  const userExist = await User.findOne({ email });
+  const userExist = await User.findOne({ $or: [{ email }, { pseudo }] });
 
   if (userExist) {
-    return res.status(400).send({ error: "User already exists" });
+    let errorText = "";
+    if (userExist.email === email) {
+      errorText = "Email already exists";
+    } else if (userExist.pseudo === pseudo) {
+      errorText = "Pseudo already exists";
+    }
+    return res.status(200).send({ error: errorText });
+  }
+
+  if(password.length<6){
+    return res.status(200).send({ error: "min length password 6" });
   }
 
   //upload image if user enter image
@@ -20,7 +31,7 @@ const resgisterUser = expressAsyncHandler(async (req, res) => {
   }
 
   const user = await User.create({
-    name,
+    pseudo,
     email,
     password,
     pic,
@@ -29,7 +40,7 @@ const resgisterUser = expressAsyncHandler(async (req, res) => {
   if (user) {
     data = {
       _id: user._id,
-      name: user.name,
+      pseudo: user.pseudo,
       email: user.email,
       pic: user.pic,
     };
@@ -50,13 +61,13 @@ const loginUser = expressAsyncHandler(async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(404).json({ error: "Email not found" });
+      return res.status(200).json({ error: "Email not found" });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
-      return res.status(401).json({ error: "Incorrect password" });
+      return res.status(200).json({ error: "Incorrect password" });
     }
 
     const token = await generateToken(user._id);

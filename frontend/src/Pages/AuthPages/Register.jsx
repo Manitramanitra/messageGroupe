@@ -5,8 +5,12 @@ import Input from "../../components/shared/Input";
 import Logo from "../../components/shared/Logo";
 import TermsCheckbox from "../../components/shared/TermsCheckbox";
 import dataInputSignup from "../../constants/staticData/dataInputRegister";
+import { toast, Toaster } from "react-hot-toast";
+import { useState } from "react";
+import ButtonSubmit from "../../components/shared/ButtonSubmit";
 
 function Register() {
+  const [isloading, setIsloading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -14,6 +18,15 @@ function Register() {
   } = useForm();
   const onSubmit = async (data) => {
     console.log(data);
+    if (data.confirmPassword !== data.password) {
+      toast.error("confirm password and password is different", {
+        style: {
+          background: "",
+          color: "black",
+        },
+      });
+      return;
+    }
   };
   return (
     <section className="bg-gradient-to-br from-green-100 via-blue-150 to-purple-200">
@@ -39,13 +52,12 @@ function Register() {
                   />
                 );
               })}
-              <TermsCheckbox register={register} errors={errors} linkUrl={"#"} />
-              <button
-                type="submit"
-                className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-              >
-                Create an account
-              </button>
+              <TermsCheckbox
+                register={register}
+                errors={errors}
+                linkUrl={"#"}
+              />
+              <ButtonSubmit isloading={isloading} text="Create an account"/>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Already have an account?{" "}
                 <Link
@@ -59,6 +71,7 @@ function Register() {
           </div>
         </div>
       </div>
+      <Toaster />
     </section>
   );
 }

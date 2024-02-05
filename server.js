@@ -5,12 +5,12 @@ const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 const morgan = require("morgan");
 const { notFound, errorHandler } = require("./middlewares/errorMiddleware");
-
+const cors = require("cors")
 const app = express();
 
 dotenv.config();
 connectDB();
-app.use(express.json()).use(morgan("dev"));
+app.use(express.json()).use(morgan("dev")).use(cors());
 
 app.use("/api/user", userRoutes);
 app.use(notFound);
