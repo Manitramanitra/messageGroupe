@@ -14,6 +14,11 @@ const resgisterUser = expressAsyncHandler(async (req, res) => {
     return res.status(400).send({ error: "User already exists" });
   }
 
+  //upload image if user enter image
+  if(req.file){
+    const file = req.file
+  }
+
   const user = await User.create({
     name,
     email,

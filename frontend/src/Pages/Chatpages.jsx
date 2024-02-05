@@ -1,7 +1,10 @@
 import React from "react";
+import Login from "./AuthPages/Login";
 
 function Chatpages() {
-  return <div>Chatpages</div>;
+  return (
+    <Login />
+  );
 }
 
 export default Chatpages;

@@ -1,22 +1,18 @@
-import React, { lazy, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { lazy, Suspense } from "react";
+import { createBrowserRouter } from "react-router-dom";
+import Login from "../../Pages/AuthPages/Login";
+import Register from "../../Pages/AuthPages/Register";
+import Notfound from "../../Pages/NotFound/Notfound";
 
+const Homepages = lazy(() => import("../../Pages/Homepages"));
+const Chatpages = lazy(() => import("../../Pages/Chatpages"));
 
-const Homepages = lazy(() => import('../../Pages/Homepages'));
-const Chatpages = lazy(() => import('../../Pages/Chatpages'));
+const router = createBrowserRouter([
+  { path: "/", element: <Homepages /> },
+  { path: "/chats", element: <Chatpages /> },
+  { path: "/register", element: <Register /> },
+  { path: "/login", element: <Login /> },
+  { path: "*", element: <Notfound /> },
+]);
 
-function AppRoutes() {
-  return (
-     <Router>
-       <Suspense fallback={<div>Loading...</div>}>
-         <Routes>
-           <Route path="/" element={<Homepages />} />
-           <Route path="/chats" element={<Chatpages />} />
-           <Route path="*" element={<Homepages />} />
-         </Routes>
-       </Suspense>
-     </Router>
-  );
- }
-
-export default AppRoutes;
+export default router;
